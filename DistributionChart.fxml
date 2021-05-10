@@ -4,7 +4,7 @@
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 
-<BarChart fx:id="distributionChart" title="Distribution Chart" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mainframe">
+<BarChart fx:id="distributionChart" title="Distribution Chart" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Mainframe">
   <xAxis>
     <CategoryAxis fx:id="digit" label="Digit" side="BOTTOM" />
   </xAxis>
