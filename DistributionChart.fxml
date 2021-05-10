@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+
+<BarChart fx:id="distributionChart" title="Distribution Chart" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mainframe">
+  <xAxis>
+    <CategoryAxis fx:id="digit" label="Digit" side="BOTTOM" />
+  </xAxis>
+  <yAxis>
+    <NumberAxis fx:id="percent" label="Percent" side="LEFT" />
+  </yAxis>
+</BarChart>
