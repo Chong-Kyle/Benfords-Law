@@ -26,7 +26,6 @@ public class Mainframe implements Initializable{
     public void initialize(URL url, ResourceBundle rb){
         try{
             readFile();
-            System.out.println("hi");
         } catch(FileNotFoundException e){
             e.printStackTrace();
         }
