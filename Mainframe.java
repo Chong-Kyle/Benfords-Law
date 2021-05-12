@@ -54,6 +54,7 @@ public class Mainframe implements Initializable{
         
     }
 
+    //Initally Designed by Patrick, Edited by Kyle
     public static void menu() {
 		Scanner s = new Scanner(System.in);	// creates console input scanner
 		System.out.println("Enter 'r' to read sales data and 'c' to check for accounting fraud.");
@@ -65,7 +66,8 @@ public class Mainframe implements Initializable{
 		switch (input) {
 		case "r":
 			readSalesData();
-			break;
+            break;
+			
 		case "c":
             try{    //Tries the readFile() method
                 readFile();
@@ -80,30 +82,28 @@ public class Mainframe implements Initializable{
     // opens sales.csv file
 	// @param none
 	// @returns none
+    //Initally Designed by Patrick, Edited by Kyle
 	public static void readSalesData() {
         Scanner s = new Scanner(System.in);    //Initializes new Scanner
-        System.out.println("To determine if the data is fraudulent, please enter the file name: "); //Text that prompts user to input the file name
+        System.out.println("Please enter the file name: "); //Text that prompts user to input the file name
         String filePath = s.nextLine();    //Defines the String 'filePath' which will store the user's input
-        String dir = System.getProperty("user.dir");    //The class file location where the program looks for input. Long story short, this is here because of an issue with VSCode. 
-        String fileInput = (dir + "\\src\\"+ filePath);   //Sets the the Scanner 'fileInput' with the file path
+        String fileInput = (filePath);   //Sets the the Scanner 'fileInput' with the file path
 		try {
 			Desktop.getDesktop().open(new File(fileInput).getAbsoluteFile());	// opens sales.csv
 			System.out.println("Sales data loaded.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+        menu();
         s.close();
 	}
 
+    //KYLE
     public static void readFile() throws FileNotFoundException {
         /*
          * The readFile method calls other methods while also asking for the user's input.
          * The method asks the user to input the name of the file they want analysed. 
          * The file name is then stored inside of 'filePath' and then with the Scanner 'fileInput', this scanner uses 'filePath' to read the contents of the specified file.
-         * The variable 'dir' is there to brute force the file search because of an issue with VSCode and projects. I discovered an issue where VSCode will go through the 
-         * 'appdata' file in your computer and go into the class file's location however, for some reason will NOT look inside of the 'src' folder which is where all the 
-         * progarm files are stored. To fix this, \\src\\ is manually added to the end of 'fileInput' so that the program properly looks through the 'src' folder.
-         * The methods 'countDigits' and 'reportResults' are then called. (These will be explained later)
          * 
          * @param reader - a Scanner used to prompt user input
          * @param filePath - the name of the file that the user wants to be analyzed
@@ -113,23 +113,24 @@ public class Mainframe implements Initializable{
         Scanner reader = new Scanner(System.in);    //Initializes new Scanner
         System.out.println("To determine if the data is fraudulent, please enter the file name: "); //Text that prompts user to input the file name
         String filePath = reader.nextLine();    //Defines the String 'filePath' which will store the user's input
-        String dir = System.getProperty("user.dir");    //The class file location where the program looks for input. Long story short, this is here because of an issue with VSCode. 
-        Scanner fileInput = new Scanner(new File(dir + "\\src\\"+ filePath));   //Sets the the Scanner 'fileInput' with the file path to where the file is stored (explained in docstring)
+        Scanner fileInput = new Scanner(new File(filePath));   //Sets the the Scanner 'fileInput' with the file path to where the file is stored (explained in docstring)
         fileInput.useDelimiter("[,\n]");    //Defines the delimiters used
-        int[] digitCount = countDigits(fileInput);  //Changes the value of th array 'digitCount' by calling the 'countDigits' method
-        int total = sumOf(digitCount) - digitCount[0];
-        System.out.println("Boop" + total);
-        double[] digitPercent = getPercent(digitCount, total);
-        try{
-            writeResults(digitPercent);
-        } catch (IOException e) {
 
+        int[] digitCount = countDigits(fileInput);  //Changes the value of the array 'digitCount' by calling the 'countDigits' method
+        int total = sumOf(digitCount) - digitCount[0];  //Updates the value of 'total' by calling 'sumOf' - digitCount[0]
+        double[] digitPercent = getPercent(digitCount, total);  //Changes the values in the array 'digitPercent'by calling the 'getPercent' method
+
+        try{
+            writeResults(digitPercent); //Calls the 'writeResults' method that opens/creates the results.csv file
+        } catch (IOException e) {   //Catches exceptions
+            System.out.println("ERROR");
         }
+
         reportResults(digitPercent, digitCount, total);  //Calls the 'reportResults' method
-        
         reader.close(); //Closes the Scanner 'reader'
     }
     
+    //KYLE
     public static int[] countDigits(Scanner fileInput) {
         /*
          * The countDigits method is responsible computing an array of occurences for each leading digit (1-9). 
@@ -146,7 +147,7 @@ public class Mainframe implements Initializable{
         return digitCount;  //Returns digitCount
     }
 
-    // returns the first nonzero digit of a string, 0 if no such digit found
+    //KYLE
     public static int firstDigitOf(String token) {
         /*
          * The method 'firstCharacterOf' is responsible for returning the first nonzero digit of the string. 
@@ -168,6 +169,7 @@ public class Mainframe implements Initializable{
         return 0;   //Returns 0
     }
 
+    //KYLE
     public static int sumOf(int[] arr) {
         /*
          * The method 'sumOf' gets the sum of the integers in the given array.
@@ -185,23 +187,29 @@ public class Mainframe implements Initializable{
         return sum; //Returns sum
     }
 
+    //KYLE
     public static double[] getPercent(int[] digitCount, int total){
+        /*
+         * The method 'getPercent' gets the percent occurence of each first digit based on the given count for each digit and the total count of tokens
+         * 
+         * @param digitCount[] - an array holding the counts for each leading digit
+         * 
+         * @returns digitPercent[] - an array holding the percent occurence of each first digit 
+         * 
+         */ 
         for (int i = 1; i < digitCount.length; i++) {   //Goes through each element in the array
             digitPercent[i] = digitCount[i] * 100.0 / total;    //Gets the percent occurence for each leading digit
-            System.out.println("hello" + digitCount[i]);
         }
-        return digitPercent;
+        return digitPercent;    //Returns the 'digitPercent' array
     }
 
-    // Reports percentages for each leading digit, excluding zeros
+    //KYLE
     public static void reportResults(double[] digitPercent, int[] digitCount, int total) {
         /*
-         * This method, 'reportResults' reports the end result of the percentage occurence for each leading digit.
-         * The method also then prints out a table showing the occurence data for each leading digit. 
+         * This method prints out a table showing the percentage data and occurence count for each leading digit.
          * 
          * @param digitCount[] - an array containing the number of times each leading digit occured
          *
-         * @returns digitPercent[] - an array containing the percentage occurence for each digit
          * @returns - a table containing the data for each leading digit
          */
         System.out.println("\nDigit Count Percent"); //Prints out the category headers
@@ -212,6 +220,7 @@ public class Mainframe implements Initializable{
         System.out.printf("Total %5d %6.2f\n", total, 100.0);   //Prints out bottom headers that line up with the data 
     }
 
+    //Initally Designed by Patrick, Edited by Kyle
     public static void writeResults(double[] digitPercent) throws IOException{
         File results = new File("results.csv");	// creates file results.csv
         results.createNewFile();	// creates results.csv onto computer
