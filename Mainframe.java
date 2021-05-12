@@ -5,7 +5,7 @@
  * Description: The class file 'mainframe.java' is the file that provides the bar chart (DistributionChart.fxml) with all its data.
  * This class file will sort through numbers in a file that the user inputs ie. sales.csv. It will then keep track of the first 
  * digit of every number while also ignoring any words (anything that doesn't start with 0-9). 
- * The program will then calculate the percentage occurance of each first digit and determine if the sales numbers are fraudulent (WIP for Patrick)
+ * The program will then calculate the percentage occurance of each first digit and determine if the sales numbers are fraudulent
  */
 
 //Imports
