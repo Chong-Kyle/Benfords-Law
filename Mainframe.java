@@ -51,7 +51,6 @@ public class Mainframe implements Initializable{
             setl.getData().add(new XYChart.Data<String,Double>(Integer.toString(i), digitPercent[i]));  //Adds the x and y values i and digitPercent[i] to the chart's data
         }
         distributionChart.getData().addAll(setl);   //Essentially sends the data for the fxml to read and implement into the bar chart
-        
     }
 
     //Initally Designed by Patrick, Edited by Kyle
@@ -237,7 +236,6 @@ public class Mainframe implements Initializable{
         DecimalFormat numberFormat = new DecimalFormat("#.00");
         w.write("Firs.Digi.,Freq.Perc.,Visual\n");	// writes table titles
         for (int i = 1; i < 10; i++) {	// following code repeated 9 times with different first digit each time
-            System.out.println(digitPercent[i]);
             w.write(i+","+numberFormat.format(digitPercent[i])+",");	// writes first digit and the freq. perc. into table
             for (int x = 0; x < digitPercent[i]; x++) {	// writes "[]" for each 1% of the first digit's freq. perc. rounded
                 w.write("[]");
