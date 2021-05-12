@@ -11,6 +11,8 @@
 //Imports
 import java.io.*;
 import java.util.*;
+import java.text.DecimalFormat;
+import java.awt.Desktop;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -21,7 +23,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 
 public class Mainframe implements Initializable{
-    private double digitPercent[] = new double[10]; //Defines the double array variable digitPercent[] with a length of 10
+    private static double digitPercent[] = new double[10]; //Defines the double array variable digitPercent[] with a length of 10
     
     @FXML   //@FXML separates certain code from the rest of the code. In this case it's used to differentiate the JavaFX layout code for the bar chat from regular code 
     private BarChart<String, Double> distributionChart; //Defines the name of the bar chart used by the fxml file, 'DistributionChart.fxml' with the arguments <String,Double>
@@ -36,16 +38,12 @@ public class Mainframe implements Initializable{
     public void initialize(URL url, ResourceBundle rb){ 
         /*
          * The initialize method's purpose is to get all the data that the bar chart needs and adds that data to the fxml file. 
-         * In this case, the method calls the readFile (explains later) which essentially gets the percent occurance of each first digit in a data set. 
+         * In this case, the method calls menu() (explains later).
          * The percent occurance is then stored inside of an array. Each digit's percent is then sent to the bar chart by using 'getData().add'.
          * In a sense, the initialize method acts as a 'main' loop in any normal code
          */
         
-        try{    //Tries the readFile() method
-            readFile();
-        } catch(FileNotFoundException e){   //If it catches an exception,
-            e.printStackTrace();    //If an exception is caught, it will print where the error occured 
-        }
+        menu(); //Calls the menu() method
         
         XYChart.Series<String, Double> setl = new XYChart.Series<>();   //Sets a new XYChart series with parameters <String, Double> under the variable setl
         
@@ -53,9 +51,51 @@ public class Mainframe implements Initializable{
             setl.getData().add(new XYChart.Data<String,Double>(Integer.toString(i), digitPercent[i]));  //Adds the x and y values i and digitPercent[i] to the chart's data
         }
         distributionChart.getData().addAll(setl);   //Essentially sends the data for the fxml to read and implement into the bar chart
+        
     }
 
-    public void readFile() throws FileNotFoundException {
+    public static void menu() {
+		Scanner s = new Scanner(System.in);	// creates console input scanner
+		System.out.println("Enter 'r' to read sales data and 'c' to check for accounting fraud.");
+		String input = s.nextLine();
+		while (!(input.equals("r") || input.equals("c"))) {	// while input isn't "r" or "c"
+			System.out.println("Please enter either 'r' or 'c'.");	// prompts user again
+			input = s.nextLine();	// scans user input again
+		}
+		switch (input) {
+		case "r":
+			readSalesData();
+			break;
+		case "c":
+            try{    //Tries the readFile() method
+                readFile();
+                break;
+            } catch(FileNotFoundException e){   //If it catches an exception,
+                e.printStackTrace();    //If an exception is caught, it will print where the error occured 
+            }
+		}
+        s.close();
+	}
+
+    // opens sales.csv file
+	// @param none
+	// @returns none
+	public static void readSalesData() {
+        Scanner s = new Scanner(System.in);    //Initializes new Scanner
+        System.out.println("To determine if the data is fraudulent, please enter the file name: "); //Text that prompts user to input the file name
+        String filePath = s.nextLine();    //Defines the String 'filePath' which will store the user's input
+        String dir = System.getProperty("user.dir");    //The class file location where the program looks for input. Long story short, this is here because of an issue with VSCode. 
+        String fileInput = (dir + "\\src\\"+ filePath);   //Sets the the Scanner 'fileInput' with the file path
+		try {
+			Desktop.getDesktop().open(new File(fileInput).getAbsoluteFile());	// opens sales.csv
+			System.out.println("Sales data loaded.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        s.close();
+	}
+
+    public static void readFile() throws FileNotFoundException {
         /*
          * The readFile method calls other methods while also asking for the user's input.
          * The method asks the user to input the name of the file they want analysed. 
@@ -77,7 +117,16 @@ public class Mainframe implements Initializable{
         Scanner fileInput = new Scanner(new File(dir + "\\src\\"+ filePath));   //Sets the the Scanner 'fileInput' with the file path to where the file is stored (explained in docstring)
         fileInput.useDelimiter("[,\n]");    //Defines the delimiters used
         int[] digitCount = countDigits(fileInput);  //Changes the value of th array 'digitCount' by calling the 'countDigits' method
-        reportResults(digitCount);  //Calls the 'reportResults' method
+        int total = sumOf(digitCount) - digitCount[0];
+        System.out.println("Boop" + total);
+        double[] digitPercent = getPercent(digitCount, total);
+        try{
+            writeResults(digitPercent);
+        } catch (IOException e) {
+
+        }
+        reportResults(digitPercent, digitCount, total);  //Calls the 'reportResults' method
+        
         reader.close(); //Closes the Scanner 'reader'
     }
     
@@ -136,8 +185,16 @@ public class Mainframe implements Initializable{
         return sum; //Returns sum
     }
 
+    public static double[] getPercent(int[] digitCount, int total){
+        for (int i = 1; i < digitCount.length; i++) {   //Goes through each element in the array
+            digitPercent[i] = digitCount[i] * 100.0 / total;    //Gets the percent occurence for each leading digit
+            System.out.println("hello" + digitCount[i]);
+        }
+        return digitPercent;
+    }
+
     // Reports percentages for each leading digit, excluding zeros
-    public void reportResults(int[] digitCount) {
+    public static void reportResults(double[] digitPercent, int[] digitCount, int total) {
         /*
          * This method, 'reportResults' reports the end result of the percentage occurence for each leading digit.
          * The method also then prints out a table showing the occurence data for each leading digit. 
@@ -147,12 +204,46 @@ public class Mainframe implements Initializable{
          * @returns digitPercent[] - an array containing the percentage occurence for each digit
          * @returns - a table containing the data for each leading digit
          */
-        int total = sumOf(digitCount) - digitCount[0];
         System.out.println("\nDigit Count Percent"); //Prints out the category headers
         for (int i = 1; i < digitCount.length; i++) {   //Goes through each element in the array
-            digitPercent[i] = digitCount[i] * 100.0 / total;    //Gets the percent occurence for each leading digit
+            //digitPercent[i] = digitCount[i] * 100.0 / total;    //Gets the percent occurence for each leading digit
             System.out.printf("%5d %5d %6.2f\n", i, digitCount[i], digitPercent[i]);    //Prints out the results for each leading digit
         }
         System.out.printf("Total %5d %6.2f\n", total, 100.0);   //Prints out bottom headers that line up with the data 
+    }
+
+    public static void writeResults(double[] digitPercent) throws IOException{
+        File results = new File("results.csv");	// creates file results.csv
+        results.createNewFile();	// creates results.csv onto computer
+        FileWriter w = null;	// declares filewriter w
+        try {
+            w = new FileWriter("results.csv");	// assigns filewriter w to results.csv
+        } catch (Exception e) {
+            System.out.println("Waiting for results.csv to close...");	
+            for (boolean loop = true; loop == true;) {	// loops following code until boolean variable loop is set to false
+                try {
+                    w = new FileWriter("results.csv");	// assigns results.csv to filewriter w, throws exception if results.csv is open
+                    loop = false;	// loop ends assuming zero exceptions
+                } catch (Exception e1) {}	// exception ignored and loop restarted
+            }
+        }
+        DecimalFormat numberFormat = new DecimalFormat("#.00");
+        w.write("Firs.Digi.,Freq.Perc.,Visual\n");	// writes table titles
+        for (int i = 1; i < 10; i++) {	// following code repeated 9 times with different first digit each time
+            System.out.println(digitPercent[i]);
+            w.write(i+","+numberFormat.format(digitPercent[i])+",");	// writes first digit and the freq. perc. into table
+            for (int x = 0; x < digitPercent[i]; x++) {	// writes "[]" for each 1% of the first digit's freq. perc. rounded
+                w.write("[]");
+            }
+            w.write("\n");	// filewriter moves down to begin next first digit
+        }
+        if (digitPercent[1] > 29 && digitPercent[1] < 32) {	// if freq. perc. of first digit 1 is between 29 and 32:
+            w.write("The data indicates that fraud likely did not occur.");
+        } else {
+            w.write("The data indicates that fraud likely did occur.");
+        }
+        w.close();	// closes filewriter w
+        Desktop.getDesktop().open(results);	// opens results.csv
+        System.out.println("Sales data analysis loaded.");
     }
 }
