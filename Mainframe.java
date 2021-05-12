@@ -107,7 +107,6 @@ public class Mainframe implements Initializable{
          * 
          * @param reader - a Scanner used to prompt user input
          * @param filePath - the name of the file that the user wants to be analyzed
-         * @param dir - the class's location within the computer. (will be explained later)
          * @param digitCount - an array that stores the occurence of each first digit
          */
         Scanner reader = new Scanner(System.in);    //Initializes new Scanner
@@ -173,7 +172,7 @@ public class Mainframe implements Initializable{
     public static int sumOf(int[] arr) {
         /*
          * The method 'sumOf' gets the sum of the integers in the given array.
-         * For example it's later called in the 'reportResults' array and the given array is digitCount.
+         * For example it's later called in the 'reportResults' array. The given array is 'digitCount'.
          * The 'sumOf' method then counts each occurence and adds them together to get the total number of first digits
          * 
          * @param arr[] - the given array when the method is called 
@@ -214,7 +213,6 @@ public class Mainframe implements Initializable{
          */
         System.out.println("\nDigit Count Percent"); //Prints out the category headers
         for (int i = 1; i < digitCount.length; i++) {   //Goes through each element in the array
-            //digitPercent[i] = digitCount[i] * 100.0 / total;    //Gets the percent occurence for each leading digit
             System.out.printf("%5d %5d %6.2f\n", i, digitCount[i], digitPercent[i]);    //Prints out the results for each leading digit
         }
         System.out.printf("Total %5d %6.2f\n", total, 100.0);   //Prints out bottom headers that line up with the data 
