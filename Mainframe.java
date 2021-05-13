@@ -4,8 +4,10 @@
  * Teacher: Mr. Ho
  * Description: The class file 'mainframe.java' is the file that provides the bar chart (DistributionChart.fxml) with all its data.
  * This class file will sort through numbers in a file that the user inputs ie. sales.csv. It will then keep track of the first 
- * digit of every number while also ignoring any words (anything that doesn't start with 0-9). 
+ * digit of every number while also ignoring any words (anything that doesn't start with 1-9). 
  * The program will then calculate the percentage occurance of each first digit and determine if the sales numbers are fraudulent
+ * 
+ * Git Repository Link: https://github.com/Chong-Kyle/Benfords-Law 
  */
 
 //Imports
@@ -47,10 +49,10 @@ public class Mainframe implements Initializable{
         
         XYChart.Series<String, Double> setl = new XYChart.Series<>();   //Sets a new XYChart series with parameters <String, Double> under the variable setl
         
-        for(int i = 1; i < 10; i++){    //For each digit 0-9
+        for(int i = 1; i < 10; i++){    //For each digit 1-9
             setl.getData().add(new XYChart.Data<String,Double>(Integer.toString(i), digitPercent[i]));  //Adds the x and y values i and digitPercent[i] to the chart's data
         }
-        distributionChart.getData().addAll(setl);   //Essentially sends the data for the fxml to read and implement into the bar chart
+        distributionChart.getData().addAll(setl);   //Sends the data for the fxml to read and implement into the bar chart
     }
 
     //Initally Designed by Patrick, Edited by Kyle
